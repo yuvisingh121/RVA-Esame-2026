@@ -1,99 +1,179 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Collemaggio VR</title>
-<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.4.0/dist/aframe-extras.min.js"></script>
+  <meta charset="utf-8">
+  <title>Collemaggio VR</title>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 
-<script>
-AFRAME.registerComponent('talk-once', {
-  init: function () {
-    let played = false;
-    this.el.addEventListener('click', () => {
-      if (played) return;
-      const sound = this.el.querySelector('#audio-prete');
-      if (!sound.components.sound) {
-        sound.addEventListener('loaded', () => { sound.components.sound.playSound(); });
-      } else { sound.components.sound.playSound(); }
-      played = true;
-      sound.addEventListener('sound-ended', () => { this.el.emit('stopparla'); });
+  <!-- Movimento limitato della camera -->
+  <script>
+    AFRAME.registerComponent('movement-clamp', {
+      schema: {
+        minX: {type: 'number', default: -10},
+        maxX: {type: 'number', default:  10},
+        minZ: {type: 'number', default: -2},
+        maxZ: {type: 'number', default:  5}
+      },
+      tick: function () {
+        const pos = this.el.getAttribute('position');
+        let x = pos.x, z = pos.z;
+        let clamped = false;
+
+        if (x < this.data.minX) { x = this.data.minX; clamped = true; }
+        if (x > this.data.maxX) { x = this.data.maxX; clamped = true; }
+        if (z < this.data.minZ) { z = this.data.minZ; clamped = true; }
+        if (z > this.data.maxZ) { z = this.data.maxZ; clamped = true; }
+
+        if (clamped) {
+          this.el.setAttribute('position', {x: x, y: pos.y, z: z});
+        }
+      }
     });
-  }
-});
-</script>
-
+  </script>
 </head>
-<body>
-<a-scene vr-mode-ui="enabled: true">
 
+<body>
+<a-scene>
+
+  <!-- Sfondo -->
   <a-sky color="#87CEFA"></a-sky>
 
-  <a-entity 
-    gltf-model="models/Basilica Collemaggio 3d.glb" 
-    position="0 0 0" 
+  <!-- Basilica -->
+  <a-entity
+    gltf-model="models/Basilica Collemaggio 3d.glb"
+    position="0 0 0"
     scale="1 1 1">
   </a-entity>
 
-  <a-entity 
-    id="prete" 
-    class="cliccabile"
+  <a-entity
+    gltf-model="models/Lorenzo.glb"
+    position="-3 0.1 0"
+    scale="1.2 1.2 1.2">
+  </a-entity>
+
+  <a-entity
+    gltf-model="models/Giorgia.glb"
+    position="-1.8 0.1 0"
+    scale="1.4 1.4 1.4"
+    rotation="0 -70 0">
+  </a-entity>
+
+  <!-- PRETE CLICCABILE + ANIMAZIONI -->
+  <a-entity id="prete" class="cliccabile"
     gltf-model="models/prete.glb"
-    position="-0.3 0.1 0" 
-    scale="2.5 2.5 2.5" 
-    rotation="0 150 0"
-    talk-once>
-    <a-sound 
-    id="audio-prete" 
-    src="audio/audioPrete.mp3" 
-    autoplay="false" 
-    volume="1">
-  </a-sound>
+    position="-0.3 0.1 0"
+    scale="2.5 2.5 2.5"
+    rotation="0 150 0">
+
+    <!-- AUDIO -->
+    <a-sound id="audio-prete"
+      src="audio/audioPrete.mp3"
+      autoplay="false"
+      volume="1">
+    </a-sound>
+
+    <!-- TESTA (rotazione leggera) 
+    <a-animation
+      attribute="rotation"
+      to="0 160 0"
+      direction="alternate"
+      dur="300"
+      repeat="indefinite"
+      begin="parla"
+      end="stopparla">
+    </a-animation> -->
+
+    <!-- CORPO (oscillazione) 
+    <a-animation
+      attribute="position"
+      to="-0.3 0.12 0"
+      direction="alternate"
+      dur="400"
+      repeat="indefinite"
+      begin="parla"
+      end="stopparla">
+    </a-animation> -->
+
+    <!-- BOCCA (simulata con scale) 
+    <a-animation
+      attribute="scale"
+      to="2.5 2.4 2.5"
+      direction="alternate"
+      dur="150"
+      repeat="indefinite"
+      begin="parla"
+      end="stopparla">
+    </a-animation> -->  
 
   </a-entity>
-  <a-light 
-    type="ambient" 
-    intensity="1">
-  </a-light>
 
-  <a-light 
-    type="directional" 
-    intensity="1" 
-    position="2 4 2">
-  </a-light>
+  <!-- Luci -->
+  <a-light type="ambient" intensity="1"></a-light>
+  <a-light type="directional" intensity="1" position="2 4 2"></a-light>
 
-  <a-plane 
-    position="0 0 18" 
-    rotation="-90 0 0" 
-    width="40" 
-    height="40" 
+  <!-- Piano -->
+  <a-plane
+    position="0 0 18"
+    rotation="-90 0 0"
+    width="40" height="40"
     color="#7BB369">
   </a-plane>
 
-  <a-text 
+  <!-- Testo -->
+  <a-text
     value="L'Aquila
-Capitale della Cultura 2026" 
-    position="-2 2 8" 
-    rotation="0 180 0" 
-    align="center" 
-    color="#FFFFFF" 
+Capitale della Cultura 2026"
+    position="-2 2 8"
+    rotation="0 180 0"
+    align="center"
+    color="#FFFFFF"
     width="10">
   </a-text>
 
-  <a-entity 
-    id="rig"
-    movement-controls="controls: gamepad; fly: false; speed: 0.2"
-    position="-2 1.6 4">
+  <!-- CAMERA VR -->
+  <a-camera
+    position="-2 2 4"
+    movement-clamp="minX: -10; maxX: 10; minZ: -2; maxZ: 5"
+    wasd-controls="acceleration: 20"
+    cursor="rayOrigin: mouse"
+    raycaster="objects: .cliccabile">
 
-    <a-entity id="camera"
-      camera
-      look-controls="pointerLockEnabled: false"
-      cursor="rayOrigin: xrselect"
-      raycaster="objects: .cliccabile">
-      
-      <a-cursor color="#FFFFFF" fuse="true" fuse-timeout="1500"></a-cursor>
-    </a-entity>
-  </a-entity>
+    <a-cursor></a-cursor>
+  </a-camera>
+
 </a-scene>
 </body>
+
+<!-- SCRIPT: audio + animazioni solo una volta -->
+<script>
+  AFRAME.registerComponent('talk-once', {
+    init: function () {
+      let played = false;
+
+      this.el.addEventListener('click', () => {
+        if (played) return;
+
+        const sound = document.querySelector('#audio-prete');
+
+        // Avvia audio
+        sound.components.sound.playSound();
+
+        // Avvia animazioni
+        // this.el.emit('parla');
+
+        played = true;
+
+        // Quando l’audio finisce → ferma animazioni
+        sound.addEventListener('sound-ended', () => {
+          this.el.emit('stopparla');
+        });
+      });
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('#prete').setAttribute('talk-once', '');
+  });
+</script>
+
 </html>
