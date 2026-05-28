@@ -31,6 +31,43 @@
         }
       }
     });
+
+    /* Variabile globale: impedisce che due parlino insieme */
+    let someoneTalking = false;
+
+    /* Componente generico per far parlare un personaggio */
+    AFRAME.registerComponent('talk-once-generic', {
+      schema: {
+        audioId: {type: 'string'}
+      },
+
+      init: function () {
+        let played = false;
+
+        this.el.addEventListener('click', () => {
+
+          // Se qualcuno sta parlando → ignora
+          if (someoneTalking) return;
+
+          // Se questo personaggio ha già parlato → ignora
+          if (played) return;
+
+          const sound = document.querySelector(this.data.audioId);
+
+          // Avvia audio
+          sound.components.sound.playSound();
+
+          // Blocca gli altri
+          someoneTalking = true;
+          played = true;
+
+          // Quando finisce → sblocca
+          sound.addEventListener('sound-ended', () => {
+            someoneTalking = false;
+          });
+        });
+      }
+    });
   </script>
 </head>
 
@@ -40,56 +77,67 @@
 
   <!-- Basilica -->
   <a-entity gltf-model="models/Basilica Collemaggio 3d.glb"
-            position="0 0 0"
+            position="0 0.1 0"
             scale="1 1 1"></a-entity>
 
-  <a-entity gltf-model="models/Lorenzo.glb"
-            position="-3 0.1 0"
-            scale="1.2 1.2 1.2"></a-entity>
+  <!-- PERSONAGGIO LORENZO -->
+  <a-entity id="lorenzo" class="cliccabile"
+            gltf-model="models/Lorenzo.glb"
+            position="-3 0.2 0"
+            scale="1.2 1.2 1.2"
+            talk-once-generic="audioId: #audio-Lorenzo">
 
+      <a-sound id="audio-Lorenzo"
+               src="audio/audioLorenzo.mp3"
+               autoplay="false"
+               volume="1"></a-sound>
+  </a-entity>
+
+  <!-- NOTICE BOARD -->
   <a-entity gltf-model="models/NoticeBoard.glb"
-            position="-15 0 2"
+            position="-15 0.1 2"
             scale="1.2 1.2 1.2"></a-entity>
 
-  <a-entity gltf-model="models/Giorgia.glb"
-            position="-14 0.1 0"
+  <!-- PERSONAGGIO GIORGIA (ORA PARLA) -->
+  <a-entity id="giorgia" class="cliccabile"
+            gltf-model="models/Giorgia.glb"
+            position="-14 0.2 0"
             scale="1.4 1.4 1.4"
-            rotation="0 -10 0"></a-entity>
+            rotation="0 -10 0"
+            talk-once-generic="audioId: #audio-Giorgia">
 
-  <!-- PRETE CLICCABILE -->
+      <a-sound id="audio-Giorgia"
+               src="audio/audioGiorgia.mp3"
+               autoplay="false"
+               volume="1"></a-sound>
+  </a-entity>
+
+  <!-- PRETE -->
   <a-entity id="prete" class="cliccabile"
             gltf-model="models/prete.glb"
-            position="-4 0.1 0"
+            position="-4 0.2 0"
             scale="2.5 2.5 2.5"
-            rotation="0 220 0">
+            rotation="0 220 0"
+            talk-once-generic="audioId: #audio-prete">
 
-    <a-sound id="audio-prete"
-             src="audio/audioPrete.mp3"
-             autoplay="false"
-             volume="1"></a-sound>
-
+      <a-sound id="audio-prete"
+               src="audio/audioPrete.mp3"
+               autoplay="false"
+               volume="1"></a-sound>
   </a-entity>
 
   <!-- Luci -->
-  <a-light type="ambient" intensity="0.35"></a-light>
-  <a-light type="directional" intensity="0.6" position="2 4 2"></a-light>
+  <a-light type="ambient" intensity="0.01"></a-light>
+  <a-light type="directional" intensity="1" position="2 4 2"></a-light>
 
-  <!-- Piano -->
-  <a-plane
-  position="0 0 18"
-  rotation="-90 0 0"
-  width="40"
-  height="40"
-  material="color: #7BB369; roughness: 1; metalness: 0"
-></a-plane>
 
   <!-- Testo -->
   <a-text value="L'Aquila\nCapitale della Cultura 2026"
-          position="-2 2 8"
+          position="-2 2 6"
           rotation="0 180 0"
           align="center"
           color="#FFFFFF"
-          width="10"></a-text>
+          width="9"></a-text>
 
   <!-- CAMERA -->
   <a-camera position="-2 2 4"
@@ -101,32 +149,6 @@
   </a-camera>
 
 </a-scene>
-
-<!-- SCRIPT: audio + animazioni solo una volta -->
-<script>
-  AFRAME.registerComponent('talk-once', {
-    init: function () {
-      let played = false;
-
-      this.el.addEventListener('click', () => {
-        if (played) return;
-
-        const sound = document.querySelector('#audio-prete');
-        sound.components.sound.playSound();
-
-        played = true;
-
-        sound.addEventListener('sound-ended', () => {
-          this.el.emit('stopparla');
-        });
-      });
-    }
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('#prete').setAttribute('talk-once', '');
-  });
-</script>
 
 </body>
 </html>
