@@ -80,11 +80,28 @@
             position="0 0.1 0"
             scale="1 1 1"></a-entity>
 
+  <!-- WHITE BOARD -->
+  <a-entity gltf-model="models/whiteboard.glb"
+            position="13.5 0 2.5"
+            scale="1.2 1.2 1.2">
+          
+          <!-- TESTO SOPRA LA LAVAGNA -->
+      <a-text value="L'Aquila\n\nCapitale della Cultura 2026\n\nwww.quilaquila.it"
+            position="-0.4 2.5 0.05"
+            rotation="0 270 0"
+            align="center"
+            color="#8B0000"
+            width="4"
+            side="double">
+      </a-text>
+  </a-entity>
+
   <!-- PERSONAGGIO LORENZO -->
   <a-entity id="lorenzo" class="cliccabile"
             gltf-model="models/Lorenzo.glb"
-            position="-3 0.2 0"
+            position="7.65 0.2 0"
             scale="1.2 1.2 1.2"
+            rotation="0 -90 0"
             talk-once-generic="audioId: #audio-Lorenzo">
 
       <a-sound id="audio-Lorenzo"
@@ -129,15 +146,6 @@
   <!-- Luci -->
   <a-light type="ambient" intensity="0.01"></a-light>
   <a-light type="directional" intensity="1" position="2 4 2"></a-light>
-
-
-  <!-- Testo -->
-  <a-text value="L'Aquila\nCapitale della Cultura 2026"
-          position="-2 2 6"
-          rotation="0 180 0"
-          align="center"
-          color="#FFFFFF"
-          width="9"></a-text>
 
   <!-- CAMERA -->
   <a-camera position="-2 2 4"
