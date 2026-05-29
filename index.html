@@ -12,7 +12,7 @@
     AFRAME.registerComponent('movement-clamp', {
       schema: {
         minX: {type: 'number', default: -10},
-        maxX: {type: 'number', default:  10},
+        maxX: {type: 'number', default:  9},
         minZ: {type: 'number', default: -2},
         maxZ: {type: 'number', default:  5}
       },
@@ -68,6 +68,10 @@
 <body>
 
 <a-scene background="color: black" environment="preset: forest" vr-mode-ui="enabled: true">
+
+  <!-- ATTIVA I CONTROLLER DELL'OCULUS QUEST -->
+  <a-entity oculus-touch-controls="hand: left"></a-entity>
+  <a-entity oculus-touch-controls="hand: right"></a-entity>
 
   <!-- BASILICA -->
   <a-entity gltf-model="models/Basilica Collemaggio 3d.glb"
@@ -147,7 +151,7 @@
   <!-- RIG VR CON MOVIMENTO A JOYSTICK -->
   <a-entity id="rig"
             movement-controls="fly: false"
-            movement-clamp="minX: -10; maxX: 10; minZ: -2; maxZ: 5"
+            movement-clamp="minX: -10; maxX: 9; minZ: -2; maxZ: 5"
             position="-2 1.6 4">
 
       <a-entity id="camera"
@@ -166,3 +170,4 @@
 
 </body>
 </html>
+
