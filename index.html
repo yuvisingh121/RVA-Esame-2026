@@ -8,7 +8,6 @@
   <script src="https://unpkg.com/aframe-environment-component"></script>
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 
-
   <!-- Movimento limitato della camera -->
   <script>
     AFRAME.registerComponent('movement-clamp', {
@@ -152,7 +151,7 @@
 
   <!-- RIG VR CON MOVIMENTO A JOYSTICK -->
   <a-entity id="rig"
-            movement-controls="fly: false"
+            movement-controls="fly: true"
             rotation-controls="enabled: true; speed: 60"
             movement-clamp="minX: -10; maxX: 9; minZ: -2; maxZ: 5"
             position="-2 1.6 4">
