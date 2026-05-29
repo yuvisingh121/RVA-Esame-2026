@@ -46,22 +46,16 @@
 
         this.el.addEventListener('click', () => {
 
-          // Se qualcuno sta parlando → ignora
           if (someoneTalking) return;
-
-          // Se questo personaggio ha già parlato → ignora
           if (played) return;
 
           const sound = document.querySelector(this.data.audioId);
 
-          // Avvia audio
           sound.components.sound.playSound();
 
-          // Blocca gli altri
           someoneTalking = true;
           played = true;
 
-          // Quando finisce → sblocca
           sound.addEventListener('sound-ended', () => {
             someoneTalking = false;
           });
@@ -73,30 +67,29 @@
 
 <body>
 
-<a-scene background="color: black" environment="preset: forest"> 
+<a-scene background="color: black" environment="preset: forest" vr-mode-ui="enabled: true">
 
-  <!-- Basilica -->
+  <!-- BASILICA -->
   <a-entity gltf-model="models/Basilica Collemaggio 3d.glb"
             position="0 0.1 0"
             scale="1 1 1"></a-entity>
 
-  <!-- WHITE BOARD -->
+  <!-- WHITEBOARD + TESTO -->
   <a-entity gltf-model="models/whiteboard.glb"
             position="13.5 0 2.5"
             scale="1.2 1.2 1.2">
-          
-          <!-- TESTO SOPRA LA LAVAGNA -->
+
       <a-text value="L'Aquila\n\nCapitale della Cultura 2026\n\nwww.quilaquila.it"
-            position="-0.4 2.5 0.05"
-            rotation="0 270 0"
-            align="center"
-            color="#8B0000"
-            width="4"
-            side="double">
+              position="-0.4 2.5 0.05"
+              rotation="0 270 0"
+              align="center"
+              color="#8B0000"
+              width="4"
+              side="double">
       </a-text>
   </a-entity>
 
-  <!-- PERSONAGGIO LORENZO -->
+  <!-- LORENZO -->
   <a-entity id="lorenzo" class="cliccabile"
             gltf-model="models/Lorenzo.glb"
             position="7.65 0.2 0"
@@ -117,7 +110,7 @@
             position="-15 0.1 2"
             scale="1.2 1.2 1.2"></a-entity>
 
-  <!-- PERSONAGGIO GIORGIA -->
+  <!-- GIORGIA -->
   <a-entity id="giorgia" class="cliccabile"
             gltf-model="models/Giorgia.glb"
             position="-14 0.2 0"
@@ -147,18 +140,27 @@
                volume="1"></a-sound>
   </a-entity>
 
-  <!-- Luci -->
+  <!-- LUCI -->
   <a-light type="ambient" intensity="0.01"></a-light>
   <a-light type="directional" intensity="1" position="2 4 2"></a-light>
 
-  <!-- CAMERA -->
-  <a-camera position="-2 2 4"
+  <!-- RIG VR CON MOVIMENTO A JOYSTICK -->
+  <a-entity id="rig"
+            movement-controls="fly: false"
             movement-clamp="minX: -10; maxX: 10; minZ: -2; maxZ: 5"
-            wasd-controls="acceleration: 20"
-            cursor="rayOrigin: mouse"
-            raycaster="objects: .cliccabile">
-      <a-cursor></a-cursor>
-  </a-camera>
+            position="-2 1.6 4">
+
+      <a-entity id="camera"
+                camera
+                look-controls="pointerLockEnabled: true"
+                universal-controls
+                gamepad-controls
+                cursor="rayOrigin: mouse"
+                raycaster="objects: .cliccabile">
+          <a-cursor></a-cursor>
+      </a-entity>
+
+  </a-entity>
 
 </a-scene>
 
